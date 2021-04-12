@@ -1,36 +1,27 @@
 # go-bitcoin
 
-#### Description
+#### 介绍
 go实现简单的类比特币系统
 
-#### Software Architecture
-Software architecture description
+#### 软件架构
+三个主要的协程
+1.挖矿-主要是挖出新区块，把交易打包到链上
+2.验证交易合法性，把接收到的交易验证通过后写入待打包切片中
+3.btc浏览器，与web交互
 
-#### Installation
+#### 安装教程
+下载代码后直接运行main.go
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+#### 使用说明
+运行程序后
+本地访问btc浏览器
+http://localhost:8080/blockchain //显示所有区块
+http://localhost:8080/transaction/:id //显示某个区块的信息
+http://localhost:8080/transaction //提交交易表单
 
-#### Instructions
+#### 参与贡献
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+1.  Fork 本仓库
+2.  新建 Feat_xxx 分支
+3.  提交代码
+4.  新建 Pull Request
