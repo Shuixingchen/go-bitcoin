@@ -1,0 +1,20 @@
+{{ define "blockchain.html" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div>
+        <ul>
+            {{range $i,$v := .}}
+            <li>
+                <span>{{$v}}</span>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</body>
+</html>
+{{end}}
