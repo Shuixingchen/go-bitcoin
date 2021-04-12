@@ -4,20 +4,20 @@
 go实现简单的类比特币系统
 
 #### 软件架构
-软件架构说明
-
+三个主要的协程
+1.挖矿-主要是挖出新区块，把交易打包到链上
+2.验证交易合法性，把接收到的交易验证通过后写入待打包切片中
+3.btc浏览器，与web交互
 
 #### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+下载代码后直接运行main.go
 
 #### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+运行程序后
+本地访问btc浏览器
+http://localhost:8080/blockchain //显示所有区块
+http://localhost:8080/transaction/:id //显示某个区块的信息
+http://localhost:8080/transaction //提交交易表单
 
 #### 参与贡献
 
@@ -25,13 +25,3 @@ go实现简单的类比特币系统
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
