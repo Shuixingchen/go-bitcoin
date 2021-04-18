@@ -76,6 +76,9 @@ func SetRouter() *gin.Engine{
 	r.LoadHTMLGlob("templates/bitcoin/*")
 
 	// 获取区块链数据路由
+	r.GET("/account", Account)
+
+	// 获取区块链数据路由
 	r.GET("/blockchain", BlockList)
 
 	// 获取某个区块信息

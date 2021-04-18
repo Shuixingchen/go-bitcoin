@@ -43,3 +43,9 @@ func PostTransaction(ctx *gin.Context){
 		"message": "success",
 	})
 }
+
+//创建新账号
+func Account(ctx *gin.Context) {
+	pri,pub := GenRsaKey()
+	ctx.HTML(http.StatusOK, "account.html",map[string][]byte{"pri":pri,"pub":pub})
+}
