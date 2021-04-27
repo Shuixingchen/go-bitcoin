@@ -3,6 +3,7 @@ package bitcoin
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/gob"
 	"encoding/hex"
 	"fmt"
 	"sync"
@@ -55,6 +56,12 @@ func (b *Block) HashTransactions() []byte {
 
 	return txHash[:]
 }
+func (b *Block) Serialize() []byte{
+	var result bytes.Buffer
+	encoder := gob.NewEncoder(&result)
+	encoder.Encode(b)
+	return result.Bytes()
+}
 
 //create
 func CreateBlockChain(pub []byte) *BlockChain{
@@ -67,12 +74,12 @@ func CreateBlockChain(pub []byte) *BlockChain{
 	return bc
 }
 
-func (b *BlockChain)AddBlock(data []*Transaction){
-	preBlock := b.blocks[len(b.blocks)-1]
+func (bc *BlockChain)AddBlock(data []*Transaction){
+	preBlock := bc.blocks[len(bc.blocks)-1]
 	block := CreateBlock(data, preBlock.Hash)
-	b.Mux.Lock()
-	b.blocks = append(b.blocks,block)
-	b.Mux.Unlock()
+	bc.Mux.Lock()
+	bc.blocks = append(bc.blocks,block)
+	bc.Mux.Unlock()
 }
 
 /*

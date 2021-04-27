@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/binary"
+	"encoding/gob"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
@@ -121,6 +122,13 @@ func IntToHex(num int64) []byte {
 
 func ByteToString(data []byte) string{
 	return hex.EncodeToString(data)
+}
+
+func DeserializeBlock(d []byte) *Block {
+	var block Block
+	decoder := gob.NewDecoder(bytes.NewReader(d))
+	decoder.Decode(&block)
+	return &block
 }
 
 
