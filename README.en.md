@@ -20,6 +20,7 @@ http://localhost:8080/transaction/:id //显示某个区块的信息
 http://localhost:8080/transaction //提交交易表单
 
 #### 参与贡献
+golangci-lint run -v 
 
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支
