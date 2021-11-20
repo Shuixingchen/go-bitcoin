@@ -18,3 +18,11 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.40
+        args: ./...
+        skip-go-installation: true
+        skip-pkg-cache: true
+        skip-build-cache: true
