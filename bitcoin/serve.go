@@ -3,28 +3,27 @@ package bitcoin
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"net/http"
 	"strconv"
 	"sync"
+
+	"github.com/gin-gonic/gin"
 )
 
-
-var(
-	BC = CreateBlockChain([]byte("aaa"))
-	TxChan = make(chan *TxParam, 10)
-	Transactions = make([]*Transaction,0)
-	lockUTXO sync.RWMutex
-	lockTxs sync.RWMutex
+var (
+	BC           = CreateBlockChain([]byte("aaa"))
+	TxChan       = make(chan *TxParam, 10)
+	Transactions = make([]*Transaction, 0)
+	lockUTXO     sync.RWMutex
+	lockTxs      sync.RWMutex
 )
-
 
 //客户端提交的交易信息
 type TxParam struct {
-	Pub string `form:"pubKey"`
-	Pri string `form:"prvKey"`
-	Amount string `form:"amount"`
+	Pub       string `form:"pubKey"`
+	Pri       string `form:"prvKey"`
+	Amount    string `form:"amount"`
 	PayeeAddr string `form:"payeeAddr"`
 }
 
@@ -36,10 +35,10 @@ func Serve() {
 
 //挖矿
 func Mining() {
-	for{
+	for {
 		lockTxs.RLock()
-		txs := Transactions[:] //复制一份作打包到当前区块中
-		Transactions = Transactions[0:0]//清空切片
+		txs := Transactions[:]           //复制一份作打包到当前区块中
+		Transactions = Transactions[0:0] //清空切片
 		lockTxs.RUnlock()
 		BC.AddBlock(txs)
 	}
@@ -47,15 +46,15 @@ func Mining() {
 
 func AcceptTransaction() {
 	for tx := range TxChan {
-		amount,_ :=  strconv.Atoi(tx.Amount)
-		pri,_ := hex.DecodeString(tx.Pri)
-		pub,_ := hex.DecodeString(tx.Pub)
-		txNew,err := NewUTXOTransaction(tx.PayeeAddr,amount, pri, pub, BC)
-		if err!=nil {
-			fmt.Println("valid transaction: %s", err )
+		amount, _ := strconv.Atoi(tx.Amount)
+		pri, _ := hex.DecodeString(tx.Pri)
+		pub, _ := hex.DecodeString(tx.Pub)
+		txNew, err := NewUTXOTransaction(tx.PayeeAddr, amount, pri, pub, BC)
+		if err != nil {
+			fmt.Println(err)
 		}
 		lockTxs.RLock()
-		Transactions = append(Transactions,txNew)
+		Transactions = append(Transactions, txNew)
 		lockTxs.RUnlock()
 	}
 }
@@ -66,7 +65,7 @@ func RunWeb() {
 	r.Run(":8080")
 }
 
-func SetRouter() *gin.Engine{
+func SetRouter() *gin.Engine {
 	r := gin.Default()
 	//给模板设置自定义函数
 	r.SetFuncMap(template.FuncMap{
