@@ -2,16 +2,16 @@ package test
 
 import (
 	"bitcoin/bitcoin"
-	db2 "bitcoin/db"
+	"bitcoin/db"
 	"fmt"
 	"testing"
 )
 
 func TestDb(t *testing.T) {
-	db := db2.GetDb()
-	defer db.Close()
-	db.Put([]byte("key"),[]byte("valueyyy"))
-	data := db.Get([]byte("key"))
+	mydb := db.GetDb()
+	defer mydb.Close()
+	mydb.Put([]byte("key"), []byte("valueyyy"))
+	data := mydb.Get([]byte("key"))
 	fmt.Println(string(data))
 }
 

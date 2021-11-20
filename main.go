@@ -4,6 +4,6 @@ import (
 	"bitcoin/bitcoin"
 )
 
-func main(){
+func main() {
 	bitcoin.Serve()
 }
