@@ -3,7 +3,6 @@ package bitcoin
 import (
 	"encoding/hex"
 	"errors"
-	"fmt"
 )
 
 type Transaction struct {
@@ -12,26 +11,23 @@ type Transaction struct {
 	Vout []TXOutput
 }
 type ScriptSig struct {
-	Address string //付款人地址
-	PubKey  []byte //付款人公钥
-	Sig     string //本次交易签名
+	Address string // 付款人地址
+	PubKey  []byte // 付款人公钥
+	Sig     string // 本次交易签名
 }
 
 type TXInput struct {
-	Txid      []byte //上个交易的transactionid
-	Voutkey   int    //上个交易的输出下标
+	Txid      []byte // 上个交易的transactionid
+	Voutkey   int    // 上个交易的输出下标
 	ScriptSig ScriptSig
 }
 type TXOutput struct {
 	Value        int
-	ScriptPubKey string //收款人的address
+	ScriptPubKey string // 收款人的address
 }
 
-//创建一个铸币交易,不需要输入，输出把奖励写到地址即可
-func NewCoinbaseTX(to, data string) *Transaction {
-	if data == "" {
-		data = fmt.Sprintf("Reward to '%s'", to)
-	}
+// 创建一个铸币交易,不需要输入，输出把奖励写到地址即可
+func NewCoinbaseTX(to string) *Transaction {
 	txin := TXInput{[]byte{}, -1, ScriptSig{Address: "", PubKey: nil, Sig: ""}}
 	txout := TXOutput{bonus, to}
 	tx := Transaction{nil, []TXInput{txin}, []TXOutput{txout}}
@@ -49,7 +45,7 @@ func (in *TXInput) Validate(bc *BlockChain) (int, error) {
 	if addr != in.ScriptSig.Address {
 		return 0, errors.New("pubkey wrong")
 	}
-	if RsaVerySignWithSha256(in.Txid, in.ScriptSig.Sig, in.ScriptSig.PubKey) == false {
+	if !RsaVerySignWithSha256(in.Txid, in.ScriptSig.Sig, in.ScriptSig.PubKey) {
 		return 0, errors.New("sig validate fail")
 	}
 	out, err := bc.UTXO.FindOutput(in)
@@ -59,13 +55,13 @@ func (in *TXInput) Validate(bc *BlockChain) (int, error) {
 	return out.Value, nil
 }
 
-//解锁这个输出，只有解锁成功，这个输出才能使，暂时用地址来解锁。传进来的地址和输出保存的地址一致，代表成功。
+// 解锁这个输出，只有解锁成功，这个输出才能使，暂时用地址来解锁。传进来的地址和输出保存的地址一致，代表成功。
 func (out *TXOutput) CanBeUnlockedWith(unlockingData string) bool {
 	return out.ScriptPubKey == unlockingData
 }
 
-//发起一个交易需要哪些信息
-func NewUTXOTransaction(to string, amount int, pubKey []byte, prvKey []byte, bc *BlockChain) (*Transaction, error) {
+// 发起一个交易需要哪些信息
+func NewUTXOTransaction(to string, amount int, pubKey, prvKey []byte, bc *BlockChain) (*Transaction, error) {
 	var outputs []TXOutput
 	var inputs []TXInput
 	from := PubKeyToAddress(pubKey)
@@ -80,8 +76,8 @@ func NewUTXOTransaction(to string, amount int, pubKey []byte, prvKey []byte, bc 
 	for txid, outmap := range validOutputs {
 		txID, _ := hex.DecodeString(txid)
 
-		for outkey, _ := range outmap {
-			//对这个input进行签名，确定是from这个人操作的
+		for outkey := range outmap {
+			// 对这个input进行签名，确定是from这个人操作的
 			scriptsig := ScriptSig{
 				Address: from,
 				PubKey:  pubKey,

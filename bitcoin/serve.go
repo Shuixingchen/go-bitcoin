@@ -9,17 +9,17 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	logs "github.com/sirupsen/logrus"
 )
 
 var (
 	BC           = CreateBlockChain([]byte("aaa"))
 	TxChan       = make(chan *TxParam, 10)
 	Transactions = make([]*Transaction, 0)
-	lockUTXO     sync.RWMutex
 	lockTxs      sync.RWMutex
 )
 
-//客户端提交的交易信息
+// 客户端提交的交易信息
 type TxParam struct {
 	Pub       string `form:"pubKey"`
 	Pri       string `form:"prvKey"`
@@ -28,17 +28,18 @@ type TxParam struct {
 }
 
 func Serve() {
+	logs.WithFields(logs.Fields{"method": "Serve"}).Info("start serve")
 	go RunWeb()
 	go AcceptTransaction()
 	Mining()
 }
 
-//挖矿
+// 挖矿
 func Mining() {
 	for {
 		lockTxs.RLock()
-		txs := Transactions[:]           //复制一份作打包到当前区块中
-		Transactions = Transactions[0:0] //清空切片
+		txs := Transactions              // 复制一份作打包到当前区块中
+		Transactions = Transactions[0:0] // 清空切片
 		lockTxs.RUnlock()
 		BC.AddBlock(txs)
 	}
@@ -59,15 +60,18 @@ func AcceptTransaction() {
 	}
 }
 
-//使用gin写一个web服务，接收用户转账，查看区块链信息
+// 使用gin写一个web服务，接收用户转账，查看区块链信息
 func RunWeb() {
 	r := SetRouter()
-	r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		logs.WithFields(logs.Fields{"method": "RunWeb"}).Error(err)
+	}
 }
 
 func SetRouter() *gin.Engine {
 	r := gin.Default()
-	//给模板设置自定义函数
+	// 给模板设置自定义函数
 	r.SetFuncMap(template.FuncMap{
 		"ByteToString": ByteToString,
 	})
@@ -83,7 +87,7 @@ func SetRouter() *gin.Engine {
 	// 获取某个区块信息
 	r.GET("/blockinfo/:id", BlockInfo)
 
-	//显示发起交易页面
+	// 显示发起交易页面
 	r.GET("/transaction", func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "transaction.html", nil)
 	})

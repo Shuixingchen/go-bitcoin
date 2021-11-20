@@ -15,26 +15,28 @@ import (
 	"errors"
 	"fmt"
 	"log"
+
+	logs "github.com/sirupsen/logrus"
 )
 
-func GetSHA256HashCode(data interface{}) string{
-	message,err := json.Marshal(data)
+func GetSHA256HashCode(data interface{}) string {
+	message, err := json.Marshal(data)
 	if err != nil {
 		fmt.Println(err)
 	}
 	hash := sha256.New()
 	hash.Write(message)
-	//计算哈希值
-	bytes := hash.Sum(nil)
-	//将字符串编码为16进制格式,返回字符串
-	hashCode := hex.EncodeToString(bytes)
-	//返回哈希值
+	// 计算哈希值
+	b := hash.Sum(nil)
+	// 将字符串编码为16进制格式,返回字符串
+	hashCode := hex.EncodeToString(b)
+	// 返回哈希值
 	return hashCode
 }
 
 /*
 RSA公钥私钥产生,我们用这个作为账户
- */
+*/
 func GenRsaKey() (prvkey, pubkey []byte) {
 	// 生成私钥文件
 	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
@@ -60,8 +62,8 @@ func GenRsaKey() (prvkey, pubkey []byte) {
 	return
 }
 
-//签名
-func RsaSignWithSha256(databyte []byte, prvKey []byte) string {
+// 签名
+func RsaSignWithSha256(databyte, prvKey []byte) string {
 	h := sha256.New()
 	h.Write(databyte)
 	hashed := h.Sum(nil)
@@ -84,8 +86,7 @@ func RsaSignWithSha256(databyte []byte, prvKey []byte) string {
 	return string(signature)
 }
 
-
-//验证
+// 验证
 func RsaVerySignWithSha256(databyte []byte, signData string, pubkey []byte) bool {
 	signDatabyte := []byte(signData)
 	block, _ := pem.Decode(pubkey)
@@ -105,11 +106,10 @@ func RsaVerySignWithSha256(databyte []byte, signData string, pubkey []byte) bool
 	return true
 }
 
-//公钥获取地址,对公钥取hash就是地址
-func PubKeyToAddress(pubKey []byte) string{
+// 公钥获取地址,对公钥取hash就是地址
+func PubKeyToAddress(pubKey []byte) string {
 	return GetSHA256HashCode(pubKey)
 }
-
 
 func IntToHex(num int64) []byte {
 	buff := new(bytes.Buffer)
@@ -120,16 +120,16 @@ func IntToHex(num int64) []byte {
 	return buff.Bytes()
 }
 
-func ByteToString(data []byte) string{
+func ByteToString(data []byte) string {
 	return hex.EncodeToString(data)
 }
 
 func DeserializeBlock(d []byte) *Block {
 	var block Block
 	decoder := gob.NewDecoder(bytes.NewReader(d))
-	decoder.Decode(&block)
+	err := decoder.Decode(&block)
+	if err != nil {
+		logs.WithFields(logs.Fields{"method": "DeserializeBlock"}).Error(err)
+	}
 	return &block
 }
-
-
-

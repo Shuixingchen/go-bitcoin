@@ -8,7 +8,7 @@ import (
 )
 
 func TestDb(t *testing.T) {
-	mydb := db.GetDb()
+	mydb := db.GetDB()
 	defer mydb.Close()
 	mydb.Put([]byte("key"), []byte("valueyyy"))
 	data := mydb.Get([]byte("key"))
